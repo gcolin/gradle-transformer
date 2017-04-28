@@ -1,0 +1,19 @@
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# Idea
+.idea/
+*.iws
+*.ipr
+*.iml
+
+# Maven
+log/
+target/
+
+# Gradle
+.gradle
+/build/
