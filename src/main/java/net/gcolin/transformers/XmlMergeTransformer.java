@@ -19,8 +19,6 @@ import com.github.jengelman.gradle.plugins.shadow.relocation.Relocator;
 
 import org.apache.tools.zip.ZipOutputStream;
 import org.gradle.api.GradleException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -34,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -54,7 +54,7 @@ public class XmlMergeTransformer extends DomTransformer {
   private DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
   private Map<String, List<Document>> documents = new HashMap<>();
   private Function<String, String> mergeXpath;
-  private Logger logger = LoggerFactory.getLogger(this.getClass());
+  private Logger logger = Logger.getLogger(this.getClass().getName());
 
   public XmlMergeTransformer(Function<String, String> mergeXpath, List<String> patterns) {
     super(patterns);
@@ -88,7 +88,7 @@ public class XmlMergeTransformer extends DomTransformer {
       Document root = entry.getValue().get(0);
       if (entry.getValue().size() > 1) {
         String xpathExpression = mergeXpath.apply(entry.getKey());
-        logger.info("assemble {} with xpath {}", entry.getKey(), xpathExpression);
+        logger.log(Level.INFO, "assemble {0} with xpath {1}", new Object[]{entry.getKey(), xpathExpression});
         try {
           if (xpathExpression != null) {
             XPathExpression expression = xpath.compile(xpathExpression);

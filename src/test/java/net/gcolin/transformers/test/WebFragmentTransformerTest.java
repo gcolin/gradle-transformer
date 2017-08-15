@@ -131,8 +131,8 @@ public class WebFragmentTransformerTest {
   
   private void eq(String path) throws IOException {
     try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(path)) {
-      Assert.assertEquals(new String(IOUtils.toByteArray(in), StandardCharsets.UTF_8),
-          new String(bout.toByteArray(), StandardCharsets.UTF_8));
+      Assert.assertEquals(new String(IOUtils.toByteArray(in), StandardCharsets.UTF_8).replaceAll("\r\n", "\n"),
+          new String(bout.toByteArray(), StandardCharsets.UTF_8).replaceAll("\r\n", "\n"));
     }
   }
 

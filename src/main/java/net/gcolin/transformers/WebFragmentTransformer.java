@@ -18,8 +18,6 @@ package net.gcolin.transformers;
 import com.github.jengelman.gradle.plugins.shadow.relocation.Relocator;
 
 import org.apache.tools.zip.ZipOutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -36,6 +34,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -56,7 +56,7 @@ public class WebFragmentTransformer extends DomTransformer {
   private DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
   private List<Document> all = new ArrayList<>();
   private String newName;
-  private Logger logger = LoggerFactory.getLogger(WebFragmentTransformer.class);
+  private Logger logger = Logger.getLogger(this.getClass().getName());
 
   public WebFragmentTransformer(String newName) {
     super(Arrays.asList("**/META-INF/web-fragment.xml"));
@@ -76,7 +76,7 @@ public class WebFragmentTransformer extends DomTransformer {
     try {
       all.add(factory.newDocumentBuilder().parse(is));
     } catch (ParserConfigurationException | IOException | SAXException ex) {
-      logger.error(ex.getMessage(), ex);
+      logger.log(Level.SEVERE, ex.getMessage(), ex);
     }
   }
 
@@ -89,7 +89,7 @@ public class WebFragmentTransformer extends DomTransformer {
   public void modifyOutputStream(ZipOutputStream jos) {
     if (hasTransformedResource()) {
       XPathFactory pathFactory = XPathFactory.newInstance();
-      logger.info("find {} fragments", all.size());
+      logger.log(Level.INFO, "find {0} fragments", all.size());
       List<Ordering> fragments = new ArrayList<>(all.size());
       for (Document doc : all) {
         try {
@@ -179,8 +179,8 @@ public class WebFragmentTransformer extends DomTransformer {
       try {
         Collections.sort(fragments, newFragmentComparator());
         
-        if(logger.isInfoEnabled()) {
-          logger.info("fragments : {}", fragments.stream().map(Ordering::getName).collect(Collectors.toList()));
+        if(logger.isLoggable(Level.INFO)) {
+          logger.log(Level.INFO, "fragments : {0}", fragments.stream().map(Ordering::getName).collect(Collectors.toList()));
         }
 
         Document allFragments = factory.newDocumentBuilder().newDocument();
@@ -235,12 +235,12 @@ public class WebFragmentTransformer extends DomTransformer {
       } catch (RuntimeException ex) {
         throw ex;
       } catch (Exception ex) {
-        logger.error(ex.getMessage(), ex);
+        logger.log(Level.SEVERE, ex.getMessage(), ex);
       } finally {
         try {
           jos.closeEntry();
         } catch (IOException ex) {
-          logger.error(ex.getMessage(), ex);
+          logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
       }
     }

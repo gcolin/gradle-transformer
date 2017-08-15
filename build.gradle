@@ -30,8 +30,6 @@ uploadArchives.repositories.mavenDeployer.pom.project {
 group = 'net.gcolin'
 version = '1.0'
 
-addSlf4j()
-
 dependencies {
    compile gradleApi()
    compile localGroovy()
